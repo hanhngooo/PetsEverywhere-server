@@ -46,6 +46,9 @@ app.get("/", (req, res) => {
   res.send("Hi from express");
 });
 
+const authRouter = require("./routers/auth.js");
+app.use("/", authRouter);
+
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
