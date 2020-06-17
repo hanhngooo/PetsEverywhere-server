@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "initdev": "npm run createDB && npm run migrate && npm run seed",
+    "dropDB": "npx sequelize-cli db:drop",
+    "resetDB": "npm run dropDB && npm run initdev",
     "migrate": "npx sequelize-cli db:migrate",
     "seed": "npx sequelize-cli db:seed:all",
     "createDB": "npx sequelize-cli db:create",
