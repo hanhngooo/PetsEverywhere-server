@@ -37,7 +37,7 @@ router.post("/uploadFile", auth, async (request, response) => {
       caption,
       userId: user.id,
     });
-    return response.status(201).send({ message: "New post is created" });
+    return response.status(201).send(newPost);
   } catch (error) {
     console.log(error);
   }
