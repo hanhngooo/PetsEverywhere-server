@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     "post",
     {
       caption: { type: DataTypes.STRING, defaultValue: "", allowNull: false },
-      imageURL: { type: DataTypes.STRING, allowNull: false },
+      image_num: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
       likes_num: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
       comments_num: {
         type: DataTypes.INTEGER,
@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     post.belongsTo(models.user);
     post.hasMany(models.like);
+    post.hasMany(models.image);
   };
   return post;
 };
