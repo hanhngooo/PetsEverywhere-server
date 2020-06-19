@@ -19,22 +19,23 @@ router.get("/:id", async (request, response) => {
   response.status(200).send(post);
 });
 
-router.post("/uploadFile", async (request, response) => {
+router.post("/uploadFile", auth, async (request, response) => {
   try {
-    // const user = await User.findByPk(request.user.id);
-    const { imageURL } = request.body;
+    const user = await User.findByPk(request.user.id);
+    const { imageURL, caption } = request.body; // reveive data from request
     if (!imageURL) {
       return response
         .status(400)
         .send({ message: "A post must have an image/video" });
     }
-    const uploadedResponse = await cloudinary.uploader.upload(imageURL);
+    const uploadedResponse = await cloudinary.uploader.upload(imageURL); // upload it to cloudinary
 
     console.log("uploaded", uploadedResponse);
 
     const newPost = await Post.create({
       imageURL: uploadedResponse.url,
-      userId: 3,
+      caption,
+      userId: user.id,
     });
     return response.status(201).send({ message: "New post is created" });
   } catch (error) {
