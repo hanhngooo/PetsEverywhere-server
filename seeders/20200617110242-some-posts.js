@@ -14,9 +14,7 @@ module.exports = {
       [
         {
           caption: "New haircut",
-          imageURL:
-            "https://pbs.twimg.com/profile_images/1151916124474183680/2iZykkYm.png",
-
+          image_num: 1,
           likes_num: 2,
 
           comments_num: 0,
@@ -27,8 +25,7 @@ module.exports = {
         },
         {
           caption: "I am so cute, you can't resist",
-          imageURL: "https://media.timeout.com/images/105634590/image.jpg",
-
+          image_num: 1,
           likes_num: 0,
 
           comments_num: 0,
@@ -39,9 +36,7 @@ module.exports = {
         },
         {
           caption: "Cat bites finger",
-          imageURL:
-            "https://ii1.pepperfry.com/media/catalog/product/c/u/494x544/cute-cat-white-silk-cushion-cover-by-stybuzz-cute-cat-white-silk-cushion-cover-by-stybuzz-rtdg0m.jpg",
-
+          image_num: 1,
           likes_num: 2,
 
           comments_num: 0,
@@ -52,7 +47,7 @@ module.exports = {
         },
         {
           caption: "Hmm?",
-          imageURL: "https://i.redd.it/npurcgsyftq21.jpg",
+          image_num: 1,
 
           likes_num: 1,
 
@@ -64,7 +59,7 @@ module.exports = {
         },
         {
           caption: "Yes I am a seal",
-          imageURL: "https://i.redd.it/w6pxnp6e8yxx.jpg",
+          image_num: 1,
 
           likes_num: 1,
 
