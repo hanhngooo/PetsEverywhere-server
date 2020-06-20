@@ -9,15 +9,11 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       caption: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: "",
         allowNull: false,
       },
-      image_num: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
+
       likes_num: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
@@ -34,6 +30,7 @@ module.exports = {
           model: "users",
           key: "id",
         },
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

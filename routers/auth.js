@@ -5,6 +5,8 @@ const authMiddleware = require("../auth/middleware");
 const { SALT_ROUNDS } = require("../config/constants");
 const User = require("../models/").user;
 const Post = require("../models").post;
+const Image = require("../models").image;
+
 const router = new Router();
 
 router.post("/login", async (req, res, next) => {
@@ -71,11 +73,22 @@ router.post("/signup", async (req, res) => {
 router.get("/me", authMiddleware, async (req, res) => {
   const posts = await Post.findAll({
     where: { userId: req.user.id },
+    include: { model: Image },
     order: [["createdAt", "DESC"]],
   });
   // don't send back the password hash
   delete req.user.dataValues["password"];
   res.status(200).send({ ...req.user.dataValues, posts });
+});
+router.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const posts = await Post.findAll({
+    where: { userId: userId },
+    include: { model: Image },
+    order: [["createdAt", "DESC"]],
+  });
+
+  res.status(200).send(posts);
 });
 
 module.exports = router;

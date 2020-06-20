@@ -4,8 +4,8 @@ module.exports = (sequelize, DataTypes) => {
   const post = sequelize.define(
     "post",
     {
-      caption: { type: DataTypes.STRING, defaultValue: "", allowNull: false },
-      image_num: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
+      caption: { type: DataTypes.TEXT, defaultValue: "", allowNull: false },
+
       likes_num: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
       comments_num: {
         type: DataTypes.INTEGER,

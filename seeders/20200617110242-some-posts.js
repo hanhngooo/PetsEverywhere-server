@@ -14,7 +14,7 @@ module.exports = {
       [
         {
           caption: "New haircut",
-          image_num: 1,
+
           likes_num: 2,
 
           comments_num: 0,
@@ -25,7 +25,7 @@ module.exports = {
         },
         {
           caption: "I am so cute, you can't resist",
-          image_num: 1,
+
           likes_num: 0,
 
           comments_num: 0,
@@ -36,7 +36,7 @@ module.exports = {
         },
         {
           caption: "Cat bites finger",
-          image_num: 1,
+
           likes_num: 2,
 
           comments_num: 0,
@@ -47,7 +47,6 @@ module.exports = {
         },
         {
           caption: "Hmm?",
-          image_num: 1,
 
           likes_num: 1,
 
@@ -59,7 +58,6 @@ module.exports = {
         },
         {
           caption: "Yes I am a seal",
-          image_num: 1,
 
           likes_num: 1,
 

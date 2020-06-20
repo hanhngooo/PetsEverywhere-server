@@ -5,9 +5,10 @@ const { cloudinary } = require("../config/cloudinary");
 
 const Post = require("../models").post;
 const User = require("../models").user;
+const Image = require("../models").image;
 
 router.get("/", async (request, response) => {
-  const posts = await Post.findAll();
+  const posts = await Post.findAll({ include: { model: Image } });
   response.status(200).send(posts);
 });
 
@@ -28,16 +29,23 @@ router.post("/uploadFile", auth, async (request, response) => {
         .status(400)
         .send({ message: "A post must have an image/video" });
     }
-    const uploadedResponse = await cloudinary.uploader.upload(imageURL); // upload it to cloudinary
+    const uploadedResponse = await cloudinary.uploader.upload(imageURL, {
+      upload_preset: "pets-dev",
+    }); // upload it to cloudinary
 
     console.log("uploaded", uploadedResponse);
 
     const newPost = await Post.create({
-      imageURL: uploadedResponse.url,
       caption,
       userId: user.id,
     });
-    return response.status(201).send(newPost);
+    const newImage = await Image.create({
+      public_Id: uploadedResponse.public_id,
+      imageURL: uploadedResponse.secure_url,
+      postId: newPost.id,
+    });
+
+    return response.status(201).json(newPost);
   } catch (error) {
     console.log(error);
   }
