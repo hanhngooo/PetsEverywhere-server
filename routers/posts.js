@@ -44,8 +44,11 @@ router.post("/uploadFile", auth, async (request, response) => {
       imageURL: uploadedResponse.secure_url,
       postId: newPost.id,
     });
-
-    return response.status(201).json(newPost);
+    const newPostWithImage = Object.assign(newPost.dataValues, {
+      images: [newImage.dataValues],
+    });
+    console.log(newPostWithImage);
+    return response.status(201).send(newPostWithImage);
   } catch (error) {
     console.log(error);
   }

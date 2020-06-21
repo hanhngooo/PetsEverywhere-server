@@ -21,7 +21,11 @@ router.post("/login", async (req, res, next) => {
 
     const user = await User.findOne({
       where: { email },
-      include: { model: Post, oreder: [["createdAt", "DESC"]] },
+      include: {
+        model: Post,
+        oreder: [["createdAt", "ASC"]],
+        include: { model: Image },
+      },
     });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
