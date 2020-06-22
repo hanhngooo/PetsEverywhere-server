@@ -98,10 +98,9 @@ router.get("/:userId", async (req, res) => {
 
 // update personal infor
 router.patch("/:userId", authMiddleware, async (req, res) => {
-  console.log(req.params.userId);
   const updatedUser = await User.findByPk(req.params.userId);
-  const { description } = req.body;
-  await updatedUser.update({ description });
+  const { name, description } = req.body;
+  await updatedUser.update({ name, description });
   res.status(200).send(updatedUser);
 });
 module.exports = router;
