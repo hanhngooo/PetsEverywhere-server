@@ -96,4 +96,12 @@ router.get("/:userId", async (req, res) => {
   res.status(200).send(posts);
 });
 
+// update personal infor
+router.patch("/:userId", authMiddleware, async (req, res) => {
+  console.log(req.params.userId);
+  const updatedUser = await User.findByPk(req.params.userId);
+  const { description } = req.body;
+  await updatedUser.update({ description });
+  res.status(200).send(updatedUser);
+});
 module.exports = router;
