@@ -23,9 +23,9 @@ router.post("/login", async (req, res, next) => {
       where: { email },
       include: {
         model: Post,
-        oreder: [["createdAt", "ASC"]],
         include: { model: Image },
       },
+      order: [[Post, "createdAt", "DESC"]],
     });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
@@ -36,6 +36,7 @@ router.post("/login", async (req, res, next) => {
 
     delete user.dataValues["password"]; // don't send back the password hash
     const token = toJWT({ userId: user.id });
+    console.log({ token, ...user.dataValues.posts });
     return res.status(200).send({ token, ...user.dataValues });
   } catch (error) {
     console.log(error);
