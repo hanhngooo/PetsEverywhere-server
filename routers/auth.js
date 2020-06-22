@@ -3,6 +3,8 @@ const { Router } = require("express");
 const { toJWT } = require("../auth/jwt");
 const authMiddleware = require("../auth/middleware");
 const { SALT_ROUNDS } = require("../config/constants");
+const { cloudinary } = require("../config/cloudinary");
+
 const User = require("../models/").user;
 const Post = require("../models").post;
 const Image = require("../models").image;
@@ -100,7 +102,23 @@ router.get("/:userId", async (req, res) => {
 router.patch("/:userId", authMiddleware, async (req, res) => {
   const updatedUser = await User.findByPk(req.params.userId);
   const { name, description } = req.body;
+
   await updatedUser.update({ name, description });
   res.status(200).send(updatedUser);
+});
+
+router.patch("/:userId/profilePic", async (req, res) => {
+  try {
+    const updatedUser = await User.findByPk(req.params.userId);
+    const { profile_pic } = req.body;
+    const uploadedResponse = await cloudinary.uploader.upload(profile_pic, {
+      upload_preset: "pets-dev",
+    });
+    await updatedUser.update({ profile_pic: uploadedResponse.public_id });
+    res.status(200).send(updatedUser);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({ message: "Something went wrong, sorry" });
+  }
 });
 module.exports = router;
