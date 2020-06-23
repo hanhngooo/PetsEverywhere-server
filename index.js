@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
 const { PORT } = require("./config/constants");
-
+const corsMiddleWare = require("cors");
+app.use(
+  corsMiddleWare({
+    credentials: true,
+  })
+);
 /**
  * Middlewares
  */
@@ -38,8 +43,8 @@ app.use(loggerMiddleWare("dev"));
  *
  */
 
-const bodyParserMiddleWare = express.json();
-app.use(bodyParserMiddleWare);
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 /**
  *
@@ -65,13 +70,44 @@ app.use(bodyParserMiddleWare);
 
 const authMiddleWare = require("./auth/middleware");
 
+/**
+ *
+ * cors middleware:
+ *
+ * Since our api is hosted on a different domain than our client
+ * we are doing "Cross Origin Resource Sharing" (cors)
+ * Cross origin resource sharing is disabled by express by default
+ * for safety reasons (should everybody be able to use your api, I don't think so!)
+ *
+ * We are configuring cors to accept all incoming requests
+ * If you want to limit this, you can look into "white listing" only certain domains
+ *
+ * docs: https://expressjs.com/en/resources/middleware/cors.html
+ *
+ */
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+
+if (process.env.DELAY) {
+  app.use((req, res, next) => {
+    setTimeout(() => next(), parseInt(process.env.DELAY));
+  });
+}
+
 // Routes
 app.get("/", (req, res) => {
   res.send("Hi from express");
 });
 
 const authRouter = require("./routers/auth.js");
+
 app.use("/", authRouter);
+
+const postsRouter = require("./routers/posts.js");
+app.use("/posts", postsRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
