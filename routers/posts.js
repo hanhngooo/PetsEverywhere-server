@@ -7,9 +7,18 @@ const Post = require("../models").post;
 const User = require("../models").user;
 const Image = require("../models").image;
 
-router.get("/", async (request, response) => {
-  const posts = await Post.findAll({ include: { model: Image } });
-  response.status(200).send(posts);
+router.get("/all", async (request, response) => {
+  try {
+    const posts = await Post.findAll({
+      include: [
+        { model: Image },
+        { model: User, attributes: ["name", "profile_pic"] },
+      ],
+    });
+    response.status(200).send(posts);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get("/:id", async (request, response) => {
