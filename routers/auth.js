@@ -84,9 +84,13 @@ router.get("/me", authMiddleware, async (req, res) => {
     include: { model: Image },
     order: [["createdAt", "DESC"]],
   });
+  const likes = await Like.findAll({
+    where: { userId: req.user.id },
+    order: [["createdAt", "DESC"]],
+  });
   // don't send back the password hash
   delete req.user.dataValues["password"];
-  res.status(200).send({ ...req.user.dataValues, posts });
+  res.status(200).send({ ...req.user.dataValues, posts, likes });
 });
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -127,7 +131,7 @@ router.patch("/:userId/profilePic", authMiddleware, async (req, res) => {
 // like a post
 router.post("/post/:postId/like", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.body;
     const postId = req.params.postId;
     const like = await Like.findOne({
       where: { userId: userId, postId: postId },
@@ -144,9 +148,9 @@ router.post("/post/:postId/like", authMiddleware, async (req, res) => {
         });
         post.likes_num++;
         await post.update({ likes_num: post.likes_num });
-        res.status(200).send({ message: "Like successfully", post });
+        return res.status(200).send({ message: "Like successfully", post });
       } else {
-        res.status(400).send({ error: "You already liked this post" });
+        return res.status(400).send({ error: "You already liked this post" });
       }
     }
   } catch (error) {
@@ -160,7 +164,7 @@ router.get("/post/:postId/allLikes", authMiddleware, async (req, res) => {
 });
 router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.body;
     const postId = req.params.postId;
     const like = await Like.findOne({
       where: { userId: userId, postId: postId },
@@ -171,13 +175,13 @@ router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
       res.status(400).send({ error: "Post does not exist" });
     } else {
       if (like === null) {
-        res.status(400).send({ error: "You already unliked this post" });
+        return res.status(400).send({ error: "You already unliked this post" });
       } else {
         console.log("like", like);
         await Like.destroy({ where: { userId: userId, postId: postId } });
         post.likes_num--;
         await post.update({ likes_num: post.likes_num });
-        res.status(200).send({ message: "Unliked successfully", post });
+        return res.status(200).send({ message: "Unliked successfully", post });
       }
     }
   } catch (error) {
