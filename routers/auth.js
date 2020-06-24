@@ -8,6 +8,7 @@ const { cloudinary } = require("../config/cloudinary");
 const User = require("../models/").user;
 const Post = require("../models").post;
 const Image = require("../models").image;
+const Like = require("../models").like;
 
 const router = new Router();
 
@@ -98,7 +99,7 @@ router.get("/:userId", async (req, res) => {
   res.status(200).send(posts);
 });
 
-// update personal infor
+// update personal infor: name, description
 router.patch("/:userId", authMiddleware, async (req, res) => {
   const updatedUser = await User.findByPk(req.params.userId);
   const { name, description } = req.body;
@@ -107,7 +108,8 @@ router.patch("/:userId", authMiddleware, async (req, res) => {
   res.status(200).send(updatedUser);
 });
 
-router.patch("/:userId/profilePic", async (req, res) => {
+// update new profile image
+router.patch("/:userId/profilePic", authMiddleware, async (req, res) => {
   try {
     const updatedUser = await User.findByPk(req.params.userId);
     const { profile_pic } = req.body;
@@ -119,6 +121,67 @@ router.patch("/:userId/profilePic", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).send({ message: "Something went wrong, sorry" });
+  }
+});
+
+// like a post
+router.post("/post/:postId/like", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const postId = req.params.postId;
+    const like = await Like.findOne({
+      where: { userId: userId, postId: postId },
+    });
+
+    const post = await Post.findOne({ where: { id: postId } });
+    if (post === null) {
+      res.status(400).send({ error: "Post does not exist" });
+    } else {
+      if (like === null) {
+        const newLike = await Like.create({
+          userId: userId,
+          postId: postId,
+        });
+        post.likes_num++;
+        await post.update({ likes_num: post.likes_num });
+        res.status(200).send({ message: "Like successfully", post });
+      } else {
+        res.status(400).send({ error: "You already liked this post" });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+//unlike a post
+router.get("/post/:postId/allLikes", authMiddleware, async (req, res) => {
+  const likes = await Like.findAll({ where: { postId: req.params.postId } });
+  res.status(200).send({ message: "All likes of this post", likes });
+});
+router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const postId = req.params.postId;
+    const like = await Like.findOne({
+      where: { userId: userId, postId: postId },
+    });
+
+    const post = await Post.findOne({ where: { id: postId } });
+    if (post === null) {
+      res.status(400).send({ error: "Post does not exist" });
+    } else {
+      if (like === null) {
+        res.status(400).send({ error: "You already unliked this post" });
+      } else {
+        console.log("like", like);
+        await Like.destroy({ where: { userId: userId, postId: postId } });
+        post.likes_num--;
+        await post.update({ likes_num: post.likes_num });
+        res.status(200).send({ message: "Unliked successfully", post });
+      }
+    }
+  } catch (error) {
+    console.log(error);
   }
 });
 module.exports = router;

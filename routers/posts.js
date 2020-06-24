@@ -14,6 +14,7 @@ router.get("/all", async (request, response) => {
         { model: Image },
         { model: User, attributes: ["name", "profile_pic"] },
       ],
+      order: [["createdAt", "DESC"]],
     });
     response.status(200).send(posts);
   } catch (error) {
