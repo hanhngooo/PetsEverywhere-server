@@ -24,10 +24,14 @@ router.post("/login", async (req, res, next) => {
 
     const user = await User.findOne({
       where: { email },
-      include: {
-        model: Post,
-        include: { model: Image },
-      },
+      include: [
+        {
+          model: Post,
+          include: { model: Image },
+        },
+        { model: Like },
+      ],
+
       order: [[Post, "createdAt", "DESC"]],
     });
 
@@ -137,7 +141,13 @@ router.post("/post/:postId/like", authMiddleware, async (req, res) => {
       where: { userId: userId, postId: postId },
     });
 
-    const post = await Post.findOne({ where: { id: postId } });
+    const post = await Post.findOne({
+      where: { id: postId },
+      include: [
+        { model: Image },
+        { model: User, attributes: ["name", "profile_pic"] },
+      ],
+    });
     if (post === null) {
       res.status(400).send({ error: "Post does not exist" });
     } else {
@@ -170,14 +180,19 @@ router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
       where: { userId: userId, postId: postId },
     });
 
-    const post = await Post.findOne({ where: { id: postId } });
+    const post = await Post.findOne({
+      where: { id: postId },
+      include: [
+        { model: Image },
+        { model: User, attributes: ["name", "profile_pic"] },
+      ],
+    });
     if (post === null) {
       res.status(400).send({ error: "Post does not exist" });
     } else {
       if (like === null) {
         return res.status(400).send({ error: "You already unliked this post" });
       } else {
-        console.log("like", like);
         await Like.destroy({ where: { userId: userId, postId: postId } });
         post.likes_num--;
         await post.update({ likes_num: post.likes_num });

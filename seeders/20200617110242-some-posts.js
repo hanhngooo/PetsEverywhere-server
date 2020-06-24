@@ -17,7 +17,7 @@ module.exports = {
 
           likes_num: 2,
 
-          comments_num: 0,
+          comments_num: 2,
 
           userId: user1.id,
           createdAt: new Date(),
@@ -28,7 +28,7 @@ module.exports = {
 
           likes_num: 0,
 
-          comments_num: 0,
+          comments_num: 2,
 
           userId: user1.id,
           createdAt: new Date(),
@@ -50,7 +50,7 @@ module.exports = {
 
           likes_num: 1,
 
-          comments_num: 0,
+          comments_num: 1,
 
           userId: user2.id,
           createdAt: new Date(),
