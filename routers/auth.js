@@ -9,6 +9,7 @@ const User = require("../models/").user;
 const Post = require("../models").post;
 const Image = require("../models").image;
 const Like = require("../models").like;
+const Comment = require("../models").comment;
 
 const router = new Router();
 
@@ -167,11 +168,13 @@ router.post("/post/:postId/like", authMiddleware, async (req, res) => {
     console.log(error);
   }
 });
-//unlike a post
+
 router.get("/post/:postId/allLikes", authMiddleware, async (req, res) => {
   const likes = await Like.findAll({ where: { postId: req.params.postId } });
   res.status(200).send({ message: "All likes of this post", likes });
 });
+
+//unlike a post
 router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.body;
@@ -203,4 +206,40 @@ router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
     console.log(error);
   }
 });
+
+// add a new comment
+router.get("/post/:postId/allComments", authMiddleware, async (req, res) => {
+  const comments = await Comment.findAll({
+    where: { postId: req.params.postId },
+  });
+  res.status(200).send({ message: "All comments of this post", comments });
+});
+
+router.post(
+  "/post/:postId/comment",
+  authMiddleware,
+  async (request, response) => {
+    try {
+      const user = await User.findByPk(request.user.id);
+      const postId = request.params.postId;
+      const post = await Post.findByPk(postId);
+      const { content } = request.body; // reveive data from request
+      if (!content) {
+        return response
+          .status(400)
+          .send({ message: "A comment must have a content" });
+      }
+
+      const newComment = await Comment.create({
+        content,
+        userId: user.id,
+        postId: postId,
+      });
+      await post.update({ comments_num: post.comments_num + 1 });
+      return response.status(201).send(newComment);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 module.exports = router;
