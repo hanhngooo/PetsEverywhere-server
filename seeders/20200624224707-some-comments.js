@@ -46,6 +46,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete("comments", null, {});
+    return queryInterface.bulkDelete("comments", cascade, {});
   },
 };

@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("images", {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("images", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -22,6 +22,8 @@ module.exports = {
           model: "posts",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
         allowNull: false,
       },
       createdAt: {
@@ -34,7 +36,7 @@ module.exports = {
       },
     });
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("images");
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable("images");
   },
 };

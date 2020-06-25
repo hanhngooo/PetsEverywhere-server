@@ -208,7 +208,7 @@ router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
 });
 
 // add a new comment
-router.get("/post/:postId/allComments", authMiddleware, async (req, res) => {
+router.get("/post/:postId/allComments", async (req, res) => {
   const comments = await Comment.findAll({
     where: { postId: req.params.postId },
   });
@@ -237,6 +237,36 @@ router.post(
       });
       await post.update({ comments_num: post.comments_num + 1 });
       return response.status(201).send(newComment);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// delete a comment
+router.delete(
+  "/post/:postId/comment/:commentId/delete",
+  authMiddleware,
+  async (request, response) => {
+    try {
+      const userId = parseInt(request.user.id);
+      const commentId = parseInt(request.params.commentId);
+      const postId = parseInt(request.params.postId);
+      const post = await Post.findByPk(postId);
+      const commentToDelete = await Comment.findByPk(commentId);
+      if (!commentToDelete) {
+        response.status(404).send({ message: "Comment not found" });
+      } else {
+        if (commentToDelete.userId !== userId) {
+          response
+            .status(403)
+            .send({ message: "You are not authorized to delete this post" });
+        } else {
+          const commentDeleted = await commentToDelete.destroy();
+          await post.update({ comments_num: post.comments_num - 1 });
+        }
+      }
+      return response.status(204).send({ message: "Comment deleted" });
     } catch (error) {
       console.log(error);
     }
