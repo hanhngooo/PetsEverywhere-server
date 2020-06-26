@@ -6,10 +6,28 @@ const { cloudinary } = require("../config/cloudinary");
 const Post = require("../models").post;
 const User = require("../models").user;
 const Image = require("../models").image;
+const Like = require("../models").like;
+const Comment = require("../models").comment;
 
-router.get("/", async (request, response) => {
-  const posts = await Post.findAll({ include: { model: Image } });
-  response.status(200).send(posts);
+router.get("/all", async (request, response) => {
+  try {
+    const posts = await Post.findAll({
+      include: [
+        { model: Image },
+        { model: User, attributes: ["name", "profile_pic"] },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["name", "profile_pic"] }],
+          order: [["createdAt", "DESC"]],
+        },
+      ],
+
+      order: [["createdAt", "DESC"]],
+    });
+    response.status(200).send(posts);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get("/:id", async (request, response) => {
@@ -49,6 +67,33 @@ router.post("/uploadFile", auth, async (request, response) => {
     });
     console.log(newPostWithImage);
     return response.status(201).send(newPostWithImage);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// delete a post
+router.delete("/:id/delete", auth, async (request, response) => {
+  try {
+    const postId = request.params.id;
+    const userId = parseInt(request.user.id);
+    const postToDelete = await Post.findOne({
+      where: { id: postId },
+      include: [{ model: Like }, { model: Image }, { model: Comment }],
+    });
+
+    if (!postToDelete) {
+      response.status(404).send({ message: "Post not found" });
+    } else {
+      if (postToDelete.userId !== userId) {
+        response
+          .status(403)
+          .send({ message: "You are not authorized to delete this post" });
+      } else {
+        const postDeleted = await postToDelete.destroy();
+      }
+    }
+    return response.status(204).send({ message: "Post deleted" });
   } catch (error) {
     console.log(error);
   }
