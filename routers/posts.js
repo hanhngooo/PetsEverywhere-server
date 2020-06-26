@@ -15,7 +15,13 @@ router.get("/all", async (request, response) => {
       include: [
         { model: Image },
         { model: User, attributes: ["name", "profile_pic"] },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["name", "profile_pic"] }],
+          order: [["createdAt", "DESC"]],
+        },
       ],
+
       order: [["createdAt", "DESC"]],
     });
     response.status(200).send(posts);

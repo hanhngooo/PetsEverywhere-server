@@ -147,6 +147,11 @@ router.post("/post/:postId/like", authMiddleware, async (req, res) => {
       include: [
         { model: Image },
         { model: User, attributes: ["name", "profile_pic"] },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["name", "profile_pic"] }],
+          order: [["createdAt", "DESC"]],
+        },
       ],
     });
     if (post === null) {
@@ -188,6 +193,11 @@ router.post("/post/:postId/unlike", authMiddleware, async (req, res) => {
       include: [
         { model: Image },
         { model: User, attributes: ["name", "profile_pic"] },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["name", "profile_pic"] }],
+          order: [["createdAt", "DESC"]],
+        },
       ],
     });
     if (post === null) {
@@ -222,7 +232,7 @@ router.post(
     try {
       const user = await User.findByPk(request.user.id);
       const postId = request.params.postId;
-      const post = await Post.findByPk(postId);
+
       const { content } = request.body; // reveive data from request
       if (!content) {
         return response
@@ -235,8 +245,20 @@ router.post(
         userId: user.id,
         postId: postId,
       });
+      const post = await Post.findOne({
+        where: { id: postId },
+        include: [
+          { model: Image },
+          { model: User, attributes: ["name", "profile_pic"] },
+          {
+            model: Comment,
+            include: [{ model: User, attributes: ["name", "profile_pic"] }],
+            order: [["createdAt", "DESC"]],
+          },
+        ],
+      });
       await post.update({ comments_num: post.comments_num + 1 });
-      return response.status(201).send(newComment);
+      return response.status(201).send(post);
     } catch (error) {
       console.log(error);
     }
