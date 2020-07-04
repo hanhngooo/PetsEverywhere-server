@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const router = new Router();
 const auth = require("../auth/middleware");
 const { cloudinary } = require("../config/cloudinary");
 
@@ -9,6 +8,9 @@ const Image = require("../models").image;
 const Like = require("../models").like;
 const Comment = require("../models").comment;
 
+const router = new Router();
+
+//get all posts
 router.get("/all", async (request, response) => {
   try {
     const posts = await Post.findAll({
@@ -29,7 +31,7 @@ router.get("/all", async (request, response) => {
     console.log(error);
   }
 });
-
+// get a single post
 router.get("/:id", async (request, response) => {
   const { id } = request.params;
   const post = await Post.findOne({
@@ -38,6 +40,7 @@ router.get("/:id", async (request, response) => {
   response.status(200).send(post);
 });
 
+// upload new post
 router.post("/uploadFile", auth, async (request, response) => {
   try {
     const user = await User.findByPk(request.user.id);
