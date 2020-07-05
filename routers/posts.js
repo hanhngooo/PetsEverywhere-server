@@ -31,14 +31,6 @@ router.get("/all", async (request, response) => {
     console.log(error);
   }
 });
-// get a single post
-router.get("/:id", async (request, response) => {
-  const { id } = request.params;
-  const post = await Post.findOne({
-    where: { id: id },
-  });
-  response.status(200).send(post);
-});
 
 // upload new post
 router.post("/uploadFile", auth, async (request, response) => {
