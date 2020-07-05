@@ -1,13 +1,13 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
 const { PORT } = require("./config/constants");
 const corsMiddleWare = require("cors");
 const loggerMiddleWare = require("morgan");
-const authMiddleWare = require("./auth/middleware");
 const authRouter = require("./routers/auth.js");
 const postsRouter = require("./routers/posts.js");
 const postRouter = require("./routers/post.js");
+
+const app = express();
 
 app.use(
   corsMiddleWare({

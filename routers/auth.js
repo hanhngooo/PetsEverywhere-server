@@ -9,7 +9,6 @@ const User = require("../models/").user;
 const Post = require("../models").post;
 const Image = require("../models").image;
 const Like = require("../models").like;
-const Comment = require("../models").comment;
 
 const router = new Router();
 
@@ -54,7 +53,6 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/signup", async (req, res) => {
   const { email, password, name } = req.body;
-  // console.log("req body", req.body);
   if (!email || !password || !name) {
     return res.status(400).send("Please provide an email, password and a name");
   }
@@ -69,7 +67,6 @@ router.post("/signup", async (req, res) => {
     delete newUser.dataValues["password"]; // don't send back the password hash
 
     const token = toJWT({ userId: newUser.id });
-    // console.log("new user", newUser);
     res.status(201).json({ token, ...newUser.dataValues });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
@@ -80,7 +77,6 @@ router.post("/signup", async (req, res) => {
     return res.status(400).send({ message: "Something went wrong, sorry" });
   }
 });
-
 // The /me endpoint can be used to:
 // - get the users email & name using only their token
 // - checking if a token is (still) valid
@@ -99,10 +95,11 @@ router.get("/me", authMiddleware, async (req, res) => {
   res.status(200).send({ ...req.user.dataValues, posts, likes });
 });
 
+// get a profile by id
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
   const user = await User.findOne({
-    where: { userId: userId },
+    where: { id: userId },
     include: {
       model: Post,
       include: { model: Image },

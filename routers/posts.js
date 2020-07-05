@@ -54,8 +54,6 @@ router.post("/uploadFile", auth, async (request, response) => {
       upload_preset: "pets-dev",
     }); // upload it to cloudinary
 
-    console.log("uploaded", uploadedResponse);
-
     const newPost = await Post.create({
       caption,
       userId: user.id,
@@ -68,7 +66,7 @@ router.post("/uploadFile", auth, async (request, response) => {
     const newPostWithImage = Object.assign(newPost.dataValues, {
       images: [newImage.dataValues],
     });
-    console.log(newPostWithImage);
+
     return response.status(201).send(newPostWithImage);
   } catch (error) {
     console.log(error);
