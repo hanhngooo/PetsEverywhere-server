@@ -18,11 +18,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       profile_pic: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: "pets-dev/yeokmku4hdt05c3780gp",
       },
       description: {
         type: DataTypes.TEXT,
         allowNull: false,
+        defaultValue: "",
       },
     },
     {}
