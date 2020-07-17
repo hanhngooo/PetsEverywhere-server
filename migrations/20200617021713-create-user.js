@@ -23,7 +23,8 @@ module.exports = {
       },
       profile_pic: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: "pets-dev/yeokmku4hdt05c3780gp",
       },
       description: {
         type: Sequelize.TEXT,

@@ -9,6 +9,30 @@ const Comment = require("../models").comment;
 
 const router = new Router();
 
+// get a single post
+router.get("/:id", async (request, response) => {
+  try {
+    const { id } = request.params;
+    const post = await Post.findOne({
+      where: { id: id },
+      include: [
+        { model: Image },
+        { model: User, attributes: ["name", "profile_pic"] },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["name", "profile_pic"] }],
+          order: [["createdAt", "DESC"]],
+        },
+      ],
+
+      order: [["createdAt", "DESC"]],
+    });
+    response.status(200).send(post);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // like a post
 router.post("/:postId/like", authMiddleware, async (req, res) => {
   try {
