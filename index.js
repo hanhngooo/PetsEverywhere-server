@@ -6,6 +6,7 @@ const loggerMiddleWare = require("morgan");
 const authRouter = require("./routers/auth.js");
 const postsRouter = require("./routers/posts.js");
 const postRouter = require("./routers/post.js");
+const usersRouter = require("./routers/users");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 app.use("/", authRouter);
 app.use("/posts", postsRouter);
 app.use("/post", postRouter);
+app.use("/users", usersRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
