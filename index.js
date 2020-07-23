@@ -13,6 +13,7 @@ const app = express();
 app.use(
   corsMiddleWare({
     credentials: true,
+    origin: "https://petseverywhere.netlify.app",
   })
 );
 app.use(loggerMiddleWare("dev"));
