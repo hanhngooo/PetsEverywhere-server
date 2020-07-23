@@ -1,50 +1,42 @@
+require("dotenv").config();
 const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 4000;
-
-/**
- * Middlewares
- */
-
-/**
- * morgan:
- *
- * simple logging middleware so you can see
- * what happened to your request
- *
- * example:
- *
- * METHOD   PATH        STATUS  RESPONSE_TIME   - Content-Length
- *
- * GET      /           200     1.807 ms        - 15
- * POST     /echo       200     10.251 ms       - 26
- * POST     /puppies    404     1.027 ms        - 147
- *
- * github: https://github.com/expressjs/morgan
- *
- */
-
+const { PORT } = require("./config/constants");
+const corsMiddleWare = require("cors");
 const loggerMiddleWare = require("morgan");
+const authRouter = require("./routers/auth.js");
+const postsRouter = require("./routers/posts.js");
+const postRouter = require("./routers/post.js");
+const usersRouter = require("./routers/users");
+
+const app = express();
+
+app.use(
+  corsMiddleWare({
+    credentials: true,
+  })
+);
 app.use(loggerMiddleWare("dev"));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 
-/**
- *
- * express.json():
- * be able to read request bodies of JSON requests
- * a.k.a. body-parser
- * Needed to be able to POST / PUT / PATCH
- *
- * docs: https://expressjs.com/en/api.html#express.json
- *
- */
-
-const bodyParserMiddleWare = express.json();
-app.use(bodyParserMiddleWare);
-
+if (process.env.DELAY) {
+  app.use((req, res, next) => {
+    setTimeout(() => next(), parseInt(process.env.DELAY));
+  });
+}
 // Routes
 app.get("/", (req, res) => {
   res.send("Hi from express");
 });
+
+app.use("/", authRouter);
+app.use("/posts", postsRouter);
+app.use("/post", postRouter);
+app.use("/users", usersRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
