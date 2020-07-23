@@ -12,7 +12,7 @@
     "seed": "npx sequelize-cli db:seed:all",
     "createDB": "npx sequelize-cli db:create",
     "dev": "npx nodemon .",
-    "start": "node ."
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
